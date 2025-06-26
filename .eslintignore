@@ -9,4 +9,3 @@ dist
 .local
 /bin
 Dockerfile
-.eslintrc.js
