@@ -118,6 +118,8 @@ module.exports = {
             'transition'
         ],
         'font-family-no-duplicate-names': null,
-        'no-duplicate-selectors': null
+        'no-duplicate-selectors': null,
+        'custom-property-pattern': '^--[a-z-]+(--[a-z-]+)*$', // 允许双连字符
+        'no-irregular-whitespace': true
     }
 };

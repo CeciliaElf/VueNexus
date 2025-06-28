@@ -2,23 +2,19 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig, AxiosRequ
 import { ElMessage } from 'element-plus';
 import { getMessageInfo } from './status';
 
-// 创建 axios 实例
 interface BaseResponse<T = any> {
     code: number | string;
     message: string;
     data: T;
-    status?: number;
+    status?: number | string;
 }
-
 const service = axios.create({
-    baseURL:
-        import.meta.env.VITE_APP_USE_MOCK === 'true'
-            ? import.meta.env.VITE_APP_MOCK_BASEURL
-            : import.meta.env.VITE_APP_API_BASEURL,
+    baseURL: import.meta.env.VITE_APP_DEV_USE_MOCK
+        ? import.meta.env.VITE_APP_MOCK_BASEURL
+        : import.meta.env.VITE_APP_API_BASEURL,
     timeout: 15000
 });
-
-// axios 实例拦截请求
+// axios实例拦截请求
 service.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
         return config;
@@ -27,28 +23,32 @@ service.interceptors.request.use(
         return Promise.reject(error);
     }
 );
-
-// axios 响应拦截请求
+// axios实例拦截响应
 service.interceptors.response.use(
     (response: AxiosResponse) => {
         if (response.status === 200) {
-            return response.data;
+            return response;
         }
         ElMessage({
             message: getMessageInfo(response.status),
             type: 'error'
         });
-        return response.data;
+        return response;
     },
     // 请求失败
     (error: any) => {
         const { response } = error;
         if (response) {
             ElMessage({
-                message: '网路连接异常，请稍后重试',
+                message: getMessageInfo(response.status),
                 type: 'error'
             });
+            return Promise.reject(response.data);
         }
+        ElMessage({
+            message: '网络连接异常,请稍后再试!',
+            type: 'error'
+        });
     }
 );
 
@@ -58,7 +58,7 @@ const requestInstance = <T = any>(config: AxiosRequestConfig): Promise<T> => {
     const conf = config;
     return new Promise((resolve, reject) => {
         service.request<any, AxiosResponse<BaseResponse>>(conf).then((res: AxiosResponse<BaseResponse>) => {
-            const data = res.data; // 如果 data.code 为错误代码返回 message 信息
+            const data = res.data; // 如果data.code为错误代码返回message信息
             if (data.code != 0) {
                 ElMessage({
                     message: data.message,
@@ -69,17 +69,15 @@ const requestInstance = <T = any>(config: AxiosRequestConfig): Promise<T> => {
                 ElMessage({
                     message: data.message,
                     type: 'success'
-                }); // 此处返回 data 信息 也就是 api 中配置好的 Response 类型
-                resolve(data.data as T); // // 解析 Promise，返回实际的业务数据 (data.data)，并斷言为 T 类型
+                }); // 此处返回data信息 也就是 api 中配置好的 Response类型
+                resolve(data.data as T);
             }
         });
     });
 };
-
 export function get<T = any, U = any>(config: AxiosRequestConfig, url: string, parms?: U): Promise<T> {
     return requestInstance({ ...config, url, method: 'GET', params: parms });
 }
-
 export function post<T = any, U = any>(config: AxiosRequestConfig, url: string, data: U): Promise<T> {
     return requestInstance({ ...config, url, method: 'POST', data: data });
 }
@@ -87,7 +85,6 @@ export function post<T = any, U = any>(config: AxiosRequestConfig, url: string, 
 export function put<T = any, U = any>(config: AxiosRequestConfig, url: string, parms?: U): Promise<T> {
     return requestInstance({ ...config, url, method: 'PUT', params: parms });
 }
-
 export function del<T = any, U = any>(config: AxiosRequestConfig, url: string, data: U): Promise<T> {
     return requestInstance({ ...config, url, method: 'DELETE', data: data });
 }

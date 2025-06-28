@@ -16,19 +16,24 @@ export interface LoginRequest {
 
 export const useUserStoreHook = defineStore('user', {
     state: (): IUserState => ({
-        username: 'Cecilia',
+        username: 'admin',
         accessToken: '',
         roles: ['common']
     }),
     getters: {},
     actions: {
         storeUserLogin(data: LoginRequest) {
-            return userLogin(data).then((res) => {
-                this.username = res.username;
-                this.accessToken = res.accessToken;
-                this.roles = res.roles;
-                return res;
-            });
+            return userLogin(data)
+                .then((res) => {
+                    this.username = res.username;
+                    this.accessToken = res.accessToken;
+                    this.roles = res.roles;
+                    return res;
+                })
+                .catch((error) => {
+                    console.error("Error in userLogin API call:", error);
+                    throw error; // Re-throw the error so it can be caught by the component
+                });
         },
         storeRefreshUserInfo() {
             if (this.username === 'Cecilia' && this.accessToken != '') {
@@ -49,7 +54,7 @@ export const useUserStoreHook = defineStore('user', {
     persist: {
         key: 'userInfo',
         storage: sessionStorage,
-        paths: ['accessToken']
+        paths: ['accessToken', 'username']
     }
 });
 

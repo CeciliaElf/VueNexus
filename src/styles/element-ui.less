@@ -1,0 +1,52 @@
+// 变更部分el变量 配置主题色
+:root {
+    --el-fill-color-blank: var(--nexus--background-color); /* 填充空白区域，如表格背景 */
+    --el-text-color-primary: var(--nexus--font-color-primary); /* 主要文本颜色 */
+    --el-bg-color: var(--nexus--background-color); /* 默认背景色，如卡片、输入框背景 */
+}
+
+// 修改 el-button--primary 主题色
+.el-button--primary {
+    --el-color-primary: var(--nexus--color--main); /* 主要按钮的背景色 */
+    --el-button-bg-color: var(--nexus--color--main); /* 确保背景色也应用 */
+    --el-button-border-color: var(--nexus--color--main); /* 按钮边框色 */
+    --el-button-text-color: var(--nexus--background-color); /* 按钮文字颜色，在深色背景上用浅色 */
+}
+
+.el-button--primary:hover,
+.el-button--primary:focus {
+    --el-button-hover-border-color: var(--nexus--color--main-light-1); /* 悬停/焦点时的边框色 */
+    --el-button-hover-bg-color: var(--nexus--color--main-light-1); /* 悬停/焦点时的背景色 */
+    --el-button-hover-text-color: var(--nexus--background-color); /* 悬停/焦点时的文字颜色 */
+}
+
+.el-button--primary:active {
+    --el-button-active-border-color: var(--nexus--color--main); /* 激活时的边框色 */
+    --el-button-active-bg-color: var(--nexus--color--main); /* 激活时的背景色 */
+    --el-button-active-text-color: var(--nexus--background-color); /* 激活时的文字颜色 */
+}
+
+// 修改 menu--horizontal 激活主题色
+.el-menu.el-menu--horizontal > .el-menu-item.is-active {
+    border-bottom: 2px solid var(--nexus--color--main); /* 激活菜单项的下边框 */
+    color: var(--nexus--color--main) !important; /* 激活菜单项的文字颜色 */
+}
+
+.el-menu.el-menu--horizontal .el-menu-item:not(.is-disabled):focus,
+.el-menu.el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
+    color: var(--nexus--color--main); /* 菜单项悬停/焦点时的文字颜色 */
+    background-color: var(--nexus--color--main-light-2); /* 菜单项悬停/焦点时的背景色 */
+}
+
+// 修改 el-switch--large 主题色
+.el-switch.is-checked.el-switch--large .el-switch__core {
+    background-color: var(--nexus--color--main); /* 选中状态开关的背景色 */
+    border-color: var(--nexus--color--main); /* 选中状态开关的边框色 */
+}
+
+// 更改 el-input 获取焦点后的主题色
+.el-input {
+    .el-input__wrapper.is-focus {
+        box-shadow: 0 0 0 1px var(--nexus--color--main) inset; /* 输入框焦点时的内阴影 */
+    }
+}
